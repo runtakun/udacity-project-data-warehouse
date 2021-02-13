@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS users (
     gender TEXT NOT NULL,
     level TEXT NOT NULL
 )
+diststyle all
 """)
 
 song_table_create = ("""
@@ -89,6 +90,7 @@ CREATE TABLE IF NOT EXISTS songs (
     year INT,
     duration DECIMAL
 )
+diststyle all
 """)
 
 artist_table_create = ("""
@@ -99,6 +101,7 @@ CREATE TABLE IF NOT EXISTS artists (
     lattitude DECIMAL,
     longitude DECIMAL
 )
+diststyle all
 """)
 
 time_table_create = ("""
@@ -111,6 +114,7 @@ CREATE TABLE IF NOT EXISTS time (
     year INT NOT NULL,
     weekday INT NOT NULL
 )
+diststyle all
 """)
 
 # STAGING TABLES
