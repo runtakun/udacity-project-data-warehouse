@@ -158,9 +158,8 @@ songplay_table_insert = ("""
     FROM log_data ld
         LEFT OUTER JOIN song_data sd
             ON ld.artist = sd.artist_name
-            AND ld.location = sd.artist_location
             AND ld.song = sd.title
-            AND ld.length = sd.duration
+    WHERE ld.page = 'NextSong'
 """)
 
 user_table_insert = ("""
