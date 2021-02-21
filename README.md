@@ -6,32 +6,32 @@ Load song play events of a mobile application and register to Redshift database.
 ## Goal of this project
 This project's goal is analyze data to find what attribute of users often play songs, what songs or artists are played often and when songs are often played.
 
-## Detailed description
+## Description of process
 
 First, script `create_tables.py` creates staging, dimension and fact tables.
-Then, script `etl.py` loads s3 json data to Redshift staging table.
-Finally, it loads staging table to dimension and fact table by using `INSERT INTO ... SELECT ...` syntax.
+Then, script `etl.py` loads json data from S3 to Redshift staging table.
+Finally, it loads from staging table to dimension and fact table by using `INSERT INTO ... SELECT ...` syntax.
 
 ### Staging tables
 
-- log_data
+- `log_data`
   provide event data recorded in json file under `log_data` directory
 
-- song_data
+- `song_data`
   provide song and artist data recorded in json file under `song_data` directory
   
 ### Dimension tables
 
-- songs
-  provide song data which are played
+- `songs`
+  provide song data which were played
 
-- artists
-  provide artist data whose songs are played
+- `artists`
+  provide artist data whose songs were played
 
-- users
+- `users`
   provide user data who played songs
 
-- time
+- `time`
   provide time data when users played songs
 
 
@@ -86,7 +86,7 @@ SELECT sp.song_id, s.title, COUNT(sp.song_id) AS cnt
 FROM songplays sp
 INNER JOIN songs s on sp.song_id = s.song_id
 INNER JOIN time t ON sp.start_time = t.start_time
-WHERE t.start_time BETWEEN '2018-11-01 00:00:00' AND '2018-11-07 00:00:00'
+WHERE t.start_time BETWEEN '2018-11-01 00:00:00' AND '2018-11-08 00:00:00'
 GROUP BY sp.song_id, s.title
 ORDER BY 3 DESC
 LIMIT 5
@@ -94,11 +94,11 @@ LIMIT 5
 
 song_id | title | cnt
 ---------- | ------ | -----
-SOBONKR12A58A7A7E0 | You're The One | 7
+SOBONKR12A58A7A7E0 | You're The One | 8
 SONTFNG12A8C13FF69 | If I Ain't Got You | 3
-SOHTKMO12AB01843B0 | Catch You Baby (Steve Pitron & Max Sanna Radio Edit) | 2
+SOHTKMO12AB01843B0 | Catch You Baby (Steve Pitron & Max Sanna Radio Edit) | 3
+SOULTKQ12AB018A183 | Nothin' On You [feat. Bruno Mars] (Album Version) | 2
 SOLZOBD12AB0185720 | Hey Daddy (Daddy's Home) | 2
-SOSELMV12A6D4FCF5A | Valerie | 1
 
 ## File descriptions
 
@@ -112,7 +112,7 @@ SOSELMV12A6D4FCF5A | Valerie | 1
   provides docker image template
 
 - `dwh.cfg`
-  parameter file for JSON path of json data, IAM Role and redshift connection
+  parameter file for paths of json data, IAM Role and redshift connection
   
 - `etl.py`
   defines etl processes
