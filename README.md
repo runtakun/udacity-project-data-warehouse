@@ -37,7 +37,7 @@ Finally, it loads from staging table to dimension and fact table by using `INSER
 
 ### Fact table
 
-- songplays
+- `songplays`
   provide event data which describe who, when and what songs are played
 
 Those tables are designed using STAR schema, which can easily analyze various aspects.
