@@ -147,17 +147,20 @@ songplay_table_insert = ("""
         user_agent
     )
     SELECT
-        TIMESTAMP 'epoch' + ts/1000 * INTERVAL '1 second' AS start_time,
-        userid,
-        level,
-        s.song_id,
-        a.artist_id,
-        sessionid,
-        a.location,
-        useragent
+        TIMESTAMP 'epoch' + ld.ts/1000 * INTERVAL '1 second' AS start_time,
+        ld.userid,
+        ld.level,
+        sd.song_id,
+        sd.artist_id,
+        ld.sessionid,
+        ld.location,
+        ld.useragent
     FROM log_data ld
-    LEFT JOIN songs s ON ld.song = s.title
-    LEFT JOIN artists a ON ld.artist = a.name
+        LEFT OUTER JOIN song_data sd
+            ON ld.artist = sd.artist_name
+            AND ld.location = sd.artist_location
+            AND ld.song = sd.title
+            AND ld.length = sd.duration
 """)
 
 user_table_insert = ("""
@@ -168,7 +171,7 @@ user_table_insert = ("""
         gender,
         level
     )
-    SELECT
+    SELECT DISTINCT 
         userid,
         firstname,
         lastname,
@@ -176,12 +179,6 @@ user_table_insert = ("""
         level
     FROM log_data
     WHERE firstname IS NOT NULL AND lastname IS NOT NULL
-    GROUP BY
-        userid,
-        firstname,
-        lastname,
-        gender,
-        level
 """)
 
 song_table_insert = ("""
@@ -192,19 +189,13 @@ song_table_insert = ("""
         year,
         duration
     )
-    SELECT
+    SELECT DISTINCT 
         song_id,
         title,
         artist_id,
         year,
         duration
     FROM song_data
-    GROUP BY
-        song_id,
-        title,
-        artist_id,
-        year,
-        duration
 """)
 
 artist_table_insert = ("""
@@ -215,19 +206,13 @@ artist_table_insert = ("""
         lattitude,
         longitude
     )
-    SELECT
+    SELECT DISTINCT 
         artist_id,
         artist_name,
         artist_location,
         artist_latitude,
         artist_longitude
     FROM song_data
-    GROUP BY
-        artist_id,
-        artist_name,
-        artist_location,
-        artist_latitude,
-        artist_longitude
 """)
 
 time_table_insert = ("""
@@ -241,12 +226,9 @@ time_table_insert = ("""
         weekday
     )
     WITH timestamps AS (
-    SELECT
+    SELECT DISTINCT
         TIMESTAMP 'epoch' + ts/1000 * INTERVAL '1 second' AS start_time
-    FROM log_data
-    GROUP BY
-        ts
-    )
+    FROM log_data)
     SELECT
         start_time,
         extract(hour from start_time),
